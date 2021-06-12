@@ -17,7 +17,7 @@ from bokeh.models import ColumnDataSource
 import sys
 from datetime import datetime
 from datetime import timedelta
-import winreg
+import os
 '''Variables'''
 StartUrl = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="
 MidUrl = "&outputsize=compact&apikey="
@@ -29,12 +29,6 @@ def CleanString(InputString):
     CapString = InputString.upper()
     CleanString = CapString.strip()
     return CleanString
-def GetUserEnvironmentVariable(name):
-    key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, r"Environment")
-    try:
-        return winreg.QueryValueEx(key, name)[0]
-    except:
-        return "demo"
 '''If the user currently has an environment variable for ALPHA_ADVANTAGE_API_KEY set up
    then this will work, else it will just submit demo.  
    That will still return results, just not the results you want:
@@ -44,7 +38,7 @@ def GetUserEnvironmentVariable(name):
 def GetSubmitUrl(InputSymbol):
     UrlSymbol = CleanString(InputSymbol)
     try:
-        ApiKey = GetUserEnvironmentVariable("ALPHA_ADVANTAGE_API_KEY")
+        ApiKey = os.environ['ALPHA_ADVANTAGE_API_KEY']
     except:
         ApiKey = "demo"
     SubmitUrl = StartUrl + UrlSymbol + MidUrl + ApiKey
